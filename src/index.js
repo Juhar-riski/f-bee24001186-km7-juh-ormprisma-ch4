@@ -12,7 +12,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 //routes user
-app.use('/api/v1/users', require('./routes/user'));
+app.use('/api/v1/users', require('./routes/userprofile'));
 app.use('/api/v1/accounts', require('./routes/bankaccount'));
 app.use('/api/v1/transactions', require('./routes/transaction'));
 

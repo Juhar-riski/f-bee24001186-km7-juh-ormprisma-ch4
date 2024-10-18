@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 const Joi = require('joi');
 
 class UserProfileService {
-  // Skema validasi dengan Joi
+  // Schema validasi dengan Joi
   userSchema = Joi.object({
     name: Joi.string().min(2).required(),
     email: Joi.string().email().required(),

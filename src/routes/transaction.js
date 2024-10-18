@@ -1,5 +1,3 @@
-// src/routes/transaction.js
-
 const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const { TransactionService } = require('../services/transaction');
