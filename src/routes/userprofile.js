@@ -56,4 +56,29 @@ router.get('/:userId', async (req, res) => {
   }
 });
 
+router.put('/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const { userData, profileData } = req.body;
+
+  try {
+    const updatedUser = await UserProfileService.updateUserWithProfile(userId, userData, profileData);
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to update user and profile' });
+  }
+});
+
+router.delete('/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const result = await UserProfileService.deleteUser(userId);
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 module.exports = router;
