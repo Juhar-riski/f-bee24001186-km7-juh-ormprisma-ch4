@@ -62,6 +62,74 @@ class UserProfileService {
       throw error;
     }
   }
-}
 
+  static async updateUserWithProfile(userId, userData, profileData) {
+    try {
+      const updatedUser = await prisma.$transaction(async (prisma) => {
+        // Update user berdasarkan ID
+        const user = await prisma.user.update({
+          where: { id: Number(userId) },
+          data: userData,
+        });
+
+        // Update profile berdasarkan ID user 
+        const profile = await prisma.profile.update({
+          where: { userId: Number(userId) },
+          data: profileData,
+        });
+
+        return { user, profile };
+      });
+
+      return updatedUser;
+    } catch (error) {
+      console.error(error);
+      throw new Error('Error updating user and profile');
+    }
+  }
+
+  static async deleteUser(userId) {
+    try {
+      await prisma.$transaction(async (prisma) => {
+        // Hapus profil user terkait
+        await prisma.profile.deleteMany({
+          where: { userId: Number(userId) },
+        });
+
+        // Dapatkan semua account yang terkait dengan user
+        const accounts = await prisma.bankAccount.findMany({
+          where: { userId: Number(userId) },
+        });
+
+        // Hapus semua transaksi yang terkait dengan accounts user
+        for (const account of accounts) {
+          await prisma.transactions.deleteMany({
+            where: {
+              OR: [
+                { sourceAccountId: account.id },
+                { destinationAccountId: account.id },
+              ],
+            },
+          });
+        }
+
+        // Hapus semua account yang terkait dengan user
+        await prisma.bankAccount.deleteMany({
+          where: { userId: Number(userId) },
+        });
+
+        // Hapus user itu sendiri
+        await prisma.user.delete({
+          where: { id: Number(userId) },
+        });
+      });
+
+      return { message: 'User and related data deleted successfully' };
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      throw new Error('Failed to delete user');
+    }
+  }
+
+}
 exports.UserProfileService = UserProfileService;
