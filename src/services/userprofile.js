@@ -1,6 +1,7 @@
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
-const Joi = require('joi');
+import Joi from 'joi';
+
 
 class UserProfileService {
   // Schema validasi dengan Joi
@@ -63,7 +64,7 @@ class UserProfileService {
     }
   }
 
-  static async updateUserWithProfile(userId, userData, profileData) {
+  async updateUserWithProfile(userId, userData, profileData) {
     try {
       const updatedUser = await prisma.$transaction(async (prisma) => {
         // Update user berdasarkan ID
@@ -88,7 +89,7 @@ class UserProfileService {
     }
   }
 
-  static async deleteUser(userId) {
+  async deleteUser(userId) {
     try {
       await prisma.$transaction(async (prisma) => {
         // Hapus profil user terkait
@@ -126,10 +127,10 @@ class UserProfileService {
 
       return { message: 'User and related data deleted successfully' };
     } catch (error) {
-      console.error('Error deleting user:', error);
+      // console.error('Error deleting user:', error);
       throw new Error('Failed to delete user');
     }
   }
 
 }
-exports.UserProfileService = UserProfileService;
+export { UserProfileService };

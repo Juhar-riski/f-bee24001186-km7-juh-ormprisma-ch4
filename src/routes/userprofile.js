@@ -1,30 +1,33 @@
-const router = require('express').Router();
-const { Prisma, PrismaClient } = require('@prisma/client');
-const { UserProfileService } = require('../services/userprofile');
-const { Router } = require('express');
+import { Router } from 'express';
+import { PrismaClient } from '@prisma/client';
+import { UserProfileService } from '../services/userprofile.js';
+import authenticateToken from '../middleware/auth.js';
+import jwt from 'jsonwebtoken';
+import hashPassword from '../middleware/regis.js'
+
+const router = Router();
 
 const prisma = new PrismaClient();
 const service = new UserProfileService();
 
-router.post('/', async (req, res, next) => {
-    console.log('Request body', req.body);
-    const { userData, profileData } = req.body;
-    
-    if (!profileData || !profileData.identityType){
-      return res.status(400).json({
-        error: 'invalid profil data'
-      });
+router.post('/register',hashPassword, async (req, res, next) => {
+  const { userData, profileData } = req.body;
+  
+  if (!profileData || !profileData.identityType){
+    return res.status(400).json({
+      error: 'invalid profil data'
+    });
+  }    
+  
+  try {
+    const result = await service.createUserWithProfile(userData, profileData);
+    return res.status(201).json({ message: 'User dan profile berhasil dibuat', data: result });
+  } catch (error) {
+    if (!res.headersSent) {
+      next(error);
     }
-    
-    try {
-      const result = await service.createUserWithProfile(userData, profileData);
-      return res.status(201).json({ message: 'User dan profile berhasil dibuat', data: result });
-    } catch (error) {
-      if (!res.headersSent){
-      next(error); // Kirim error ke middleware error
-      }
-    }
-  });
+  }
+});
 
 router.get('/', async (req, res) => {
   try {
@@ -36,7 +39,9 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:userId', async (req, res) => {
+
+
+router.get('/:userId',authenticateToken, async (req, res) => {
   const { userId } = req.params;
 
   try {
@@ -56,12 +61,12 @@ router.get('/:userId', async (req, res) => {
   }
 });
 
-router.put('/:userId', async (req, res) => {
+router.put('/:userId',authenticateToken, async (req, res) => {
   const { userId } = req.params;
   const { userData, profileData } = req.body;
 
   try {
-    const updatedUser = await UserProfileService.updateUserWithProfile(userId, userData, profileData);
+    const updatedUser = await service.updateUserWithProfile(userId, userData, profileData);
     res.status(200).json(updatedUser);
   } catch (error) {
     console.error(error);
@@ -69,16 +74,16 @@ router.put('/:userId', async (req, res) => {
   }
 });
 
-router.delete('/:userId', async (req, res) => {
+router.delete('/:userId',authenticateToken, async (req, res) => {
   const { userId } = req.params;
 
   try {
-    const result = await UserProfileService.deleteUser(userId);
+    const result = await service.deleteUser(userId);
     res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    res.status(500).json({ error: 'Delete error' });
   }
 });
 
 
-module.exports = router;
+export default router;

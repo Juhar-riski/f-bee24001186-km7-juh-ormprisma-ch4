@@ -1,11 +1,13 @@
-const express = require('express');
-const { PrismaClient } = require('@prisma/client');
+import express from 'express';
+import { PrismaClient } from '@prisma/client'
+import authenticateToken from '../middleware/auth.js';
+
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
 // Route POST untuk menambahkan akun baru
-router.post('/', async (req, res) => {
+router.post('/',authenticateToken, async (req, res) => {
   const { userId, bankName, bankAccountNumber, balance } = req.body;
 
   try {
@@ -15,7 +17,7 @@ router.post('/', async (req, res) => {
     }
 
     // Menambahkan akun baru
-    const newAccount = await prisma.BankAccount.create({
+    const newAccount = await prisma.bankAccount.create({
       data: {
         userId: parseInt(userId),
         bankName,
@@ -26,22 +28,20 @@ router.post('/', async (req, res) => {
 
     res.status(201).json(newAccount);
   } catch (error) {
-    console.error('Error creating account:', error);
     res.status(500).json({ error: 'Failed to create account' });
   }
 });
 
-router.get('/', async (req, res) => {
+router.get('/',authenticateToken, async (req, res) => {
   try {
     const accounts = await prisma.bankAccount.findMany(); // Ambil semua akun
     res.status(200).json(accounts); // Kirimkan daftar akun sebagai respons
   } catch (error) {
-    console.error('Error fetching accounts:', error);
     res.status(500).json({ error: 'Failed to fetch accounts' });
   }
 });
 
-router.get('/:accountsId', async (req, res) => {
+router.get('/:accountsId',authenticateToken, async (req, res) => {
   const { accountsId } = req.params; // Mengambil accountId dari parameter URL
 
   try {
@@ -57,9 +57,8 @@ router.get('/:accountsId', async (req, res) => {
 
     res.json(account); // Mengirimkan detail akun sebagai respons
   } catch (error) {
-    console.error('Error fetching account details:', error);
     res.status(500).json({ error: 'Failed to fetch account details' });
   }
 });
 
-module.exports = router;
+export default router;
