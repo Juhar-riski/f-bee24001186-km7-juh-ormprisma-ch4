@@ -4,12 +4,12 @@ import express from 'express';
 import { PrismaClient } from '@prisma/client';
 import transactionRouter from '../../routes/transaction.js';
 import authenticateToken from '../../middleware/auth.js';
-import jwt from 'jsonwebtoken'; // Import jwt untuk menghasilkan token
+import jwt from 'jsonwebtoken'; 
 
 const app = express();
 const prisma = new PrismaClient();
 app.use(express.json());
-app.use(authenticateToken); // middleware authentication
+app.use(authenticateToken);
 app.use('/transactions', transactionRouter);
 
 // Mocking Prisma Client
@@ -33,7 +33,7 @@ describe('Transaction Routes', () => {
   const mockTransaction = { id: 1, amount: 100, sourceAccountId: 1, destinationAccountId: 2 };
   const mockAccount = { id: 1, balance: 200 };
   const mockAccountDest = { id: 2, balance: 100 };
-  const secretKey = 'your-secret-key'; // Ganti dengan secret key Anda
+  const secretKey = 'your-secret-key';
 
   // Generate a valid token
   const generateToken = (userId) => {
@@ -45,7 +45,7 @@ describe('Transaction Routes', () => {
   });
 
   it('POST /transactions - should create a transaction', async () => {
-    const token = generateToken(1); // Menghasilkan token untuk user ID 1
+    const token = generateToken(1); 
 
     prisma.bankAccount.findUnique.mockResolvedValueOnce(mockAccount);
     prisma.bankAccount.findUnique.mockResolvedValueOnce(mockAccountDest);
@@ -56,7 +56,7 @@ describe('Transaction Routes', () => {
 
     const response = await request(app)
       .post('/transactions')
-      .set('Authorization', `Bearer ${token}`) // Mengatur header Authorization
+      .set('Authorization', `Bearer ${token}`) 
       .send({
         sourceAccountId: 1,
         destinationAccountId: 2,

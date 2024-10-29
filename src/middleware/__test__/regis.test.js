@@ -1,4 +1,4 @@
-import hashPassword from '../regis.js'; // Sesuaikan dengan path yang benar
+import hashPassword from '../regis.js';
 import bcrypt from 'bcrypt';
 
 jest.mock('bcrypt');

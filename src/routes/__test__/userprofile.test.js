@@ -3,8 +3,6 @@ import express from 'express';
 import router from '../userprofile.js';
 import { PrismaClient } from '@prisma/client';
 import { UserProfileService } from '../../services/userprofile.js';
-import hashPassword from '../../middleware/regis.js';
-import authenticateToken from '../../middleware/auth.js';
 
 jest.mock('@prisma/client', () => ({
   PrismaClient: jest.fn().mockImplementation(() => ({

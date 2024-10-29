@@ -42,12 +42,11 @@ router.get('/',authenticateToken, async (req, res) => {
 });
 
 router.get('/:accountsId',authenticateToken, async (req, res) => {
-  const { accountsId } = req.params; // Mengambil accountId dari parameter URL
+  const { accountsId } = req.params; 
 
   try {
-    // Mencari akun berdasarkan accountId
     const account = await prisma.bankAccount.findUnique({
-      where: { id: parseInt(accountsId) }, // Pastikan untuk mengkonversi accountId ke integer
+      where: { id: parseInt(accountsId) }, 
       include: { user: true },
     });
 
