@@ -1,4 +1,4 @@
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 class TransactionService {
@@ -64,4 +64,4 @@ class TransactionService {
   
 }
 
-exports.TransactionService = TransactionService;
+export { TransactionService };

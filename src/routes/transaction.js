@@ -1,13 +1,13 @@
-const express = require('express');
-const { PrismaClient } = require('@prisma/client');
-const { TransactionService } = require('../services/transaction');
-
+import express from 'express';
+import { PrismaClient } from '@prisma/client';
+import {TransactionService } from '../services/transaction.js'
+import authenticateToken from '../middleware/auth.js';
 
 const router = express.Router();
 const prisma = new PrismaClient();
 
 // Route POST untuk mengirimkan uang dari satu akun ke akun lain
-router.post('/', async (req, res) => {
+router.post('/',authenticateToken, async (req, res) => {
   const { sourceAccountId, destinationAccountId, amount } = req.body;
 
   try {
@@ -71,7 +71,7 @@ router.post('/', async (req, res) => {
   }
 });
 
-router.get('/', async (req, res) => {
+router.get('/',authenticateToken, async (req, res) => {
   try {
     const transactions = await TransactionService.getAllTransactions();
     res.status(200).json(transactions);
@@ -80,7 +80,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:transactionId', async (req, res) => {
+router.get('/:transactionId',authenticateToken, async (req, res) => {
   const { transactionId } = req.params;
   
   try {
@@ -95,4 +95,5 @@ router.get('/:transactionId', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
+
