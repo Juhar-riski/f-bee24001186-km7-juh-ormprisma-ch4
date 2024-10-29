@@ -6,7 +6,7 @@ import authenticateToken from '../middleware/auth.js';
 const router = express.Router();
 const prisma = new PrismaClient();
 
-// Route POST untuk mengirimkan uang dari satu akun ke akun lain
+// Route untuk mengirimkan uang dari satu akun ke akun lain
 router.post('/',authenticateToken, async (req, res) => {
   const { sourceAccountId, destinationAccountId, amount } = req.body;
 

@@ -3,7 +3,6 @@ import app from '../../index';
 import { PrismaClient } from '@prisma/client';
 import jwt from 'jsonwebtoken';
 
-// Membuat mock untuk PrismaClient
 jest.mock('@prisma/client', () => {
   const mPrismaClient = {
     bankAccount: {
@@ -23,7 +22,7 @@ const authHeader = `Bearer ${mockAuthToken}`;
 
 describe('Bank Account Routes', () => {
   afterEach(() => {
-    jest.clearAllMocks(); // Membersihkan semua mock setelah setiap pengujian
+    jest.clearAllMocks(); 
   });
 
   describe('POST /api/v1/accounts', () => {
