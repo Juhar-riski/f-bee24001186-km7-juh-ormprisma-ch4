@@ -33,7 +33,7 @@ describe('Transaction Routes', () => {
   const mockTransaction = { id: 1, amount: 100, sourceAccountId: 1, destinationAccountId: 2 };
   const mockAccount = { id: 1, balance: 200 };
   const mockAccountDest = { id: 2, balance: 100 };
-  const secretKey = 'your-secret-key';
+  const secretKey = 'secret';
 
   // Generate a valid token
   const generateToken = (userId) => {
